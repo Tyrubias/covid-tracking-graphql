@@ -1,9 +1,9 @@
 {
-    "name": "apollo-express-graphql-template",
+    "name": "covid-tracking-graphql",
     "version": "1.0.0",
-    "description": "A template repository for Apollo + Express + graphql-compose projects",
+    "description": "A GraphQL wrapper for the API at https://covidtracking.com/",
     "main": "index.js",
-    "repository": "https://github.com/Tyrubias/apollo-express-graphql-template",
+    "repository": "https://github.com/Tyrubias/covid-track-graphql",
     "author": "vms2@rice.edu",
     "license": "MIT",
     "private": false,
