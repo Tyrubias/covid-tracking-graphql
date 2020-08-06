@@ -18,13 +18,15 @@
         "server": "node --trace-warnings build/index.js"
     },
     "dependencies": {
+        "apollo-datasource-rest": "^0.9.3",
         "apollo-server-express": "^2.16.1",
         "cors": "^2.8.5",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
         "graphql": "^14.0.0",
         "graphql-compose": "^7.19.1",
-        "loglevel": "^1.6.8"
+        "loglevel": "^1.6.8",
+        "moment": "^2.27.0"
     },
     "devDependencies": {
         "@babel/cli": "^7.10.5",

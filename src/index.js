@@ -3,14 +3,22 @@ import cors from "cors";
 import express from "express";
 import log from "loglevel";
 
+import "./config";
+import COVIDTrackingAPI from "./utils/covidAPI";
+
 const app = express().use(
     cors({
-        origin: ["http://localhost:3000/"],
+        origin: "*",
         credentials: true,
     }),
 );
 
 const server = new ApolloServer({
+    dataSources: () => {
+        return {
+            covidAPI: new COVIDTrackingAPI(),
+        }
+    },
     introspection: true,
 });
 
