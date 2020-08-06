@@ -9,57 +9,49 @@ class COVIDTrackingAPI extends RESTDataSource {
     }
 
     async getHistoricUS() {
-        return this.get("/v1/us/daily.json").then((data) => data.json());
+        return this.get("v1/us/daily.json");
     }
 
     async getCurrentUS() {
-        return this.get("/v1/us/current.json").then((data) => data.json());
+        return this.get("v1/us/current.json");
     }
 
     async getUSDataDate(date) {
-        return this.get(
-            `/v1/us/${moment(date).format("YYYYMMDD")}.json`,
-        ).then((data) => data.json());
+        return this.get(`v1/us/${moment(date).format("YYYYMMDD")}.json`);
     }
 
     async getStatesMetadata() {
-        return this.get("/v1/states/info.json").then((data) => data.json());
+        return this.get("v1/states/info.json");
     }
 
     async getMetadataState(stateAbbrev) {
-        return this.get(`/v1/states/${stateAbbrev}/info.json`).then((data) =>
-            data.json(),
-        );
+        return this.get(`v1/states/${stateAbbrev}/info.json`);
     }
 
     async getHistoricStates() {
-        return this.get("/v1/states/daily.json").then((data) => data.json());
+        return this.get("v1/states/daily.json");
     }
 
     async getCurrentStates() {
-        return this.get("/v1/states/current.json").then((data) => data.json());
+        return this.get("v1/states/current.json");
     }
 
     async getCurrentForState(stateAbbrev) {
-        return this.get(`/v1/states/${stateAbbrev}/current.json`).then((data) =>
-            data.json(),
-        );
+        return this.get(`v1/states/${stateAbbrev}/current.json`);
     }
 
     async getHistoricForState(stateAbbrev) {
-        return this.get(`/v1/states/${stateAbbrev}/daily.json`).then((data) =>
-            data.json(),
-        );
+        return this.get(`v1/states/${stateAbbrev}/daily.json`);
     }
 
     async getStateOnDate(stateAbbrev, date) {
         return this.get(
-            `/v1/states/${stateAbbrev}/${moment(date).format("YYYYMMDD")}.json`,
-        ).then((data) => data.json());
+            `v1/states/${stateAbbrev}/${moment(date).format("YYYYMMDD")}.json`,
+        );
     }
 
     async getAPIStatus() {
-        return this.get(`/v1/status.json`).then((data) => data.json());
+        return this.get(`v1/status.json`);
     }
 }
 

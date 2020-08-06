@@ -1,4 +1,5 @@
 import { sc } from "graphql-compose";
+import moment from "moment";
 
 const USDataTC = sc.createObjectTC({
     name: "USData",
@@ -26,4 +27,87 @@ const USDataTC = sc.createObjectTC({
     },
 });
 
-export default USDataTC;
+USDataTC.addResolver({
+    name: "findOne",
+    type: USDataTC,
+    args: {
+        date: "Date!",
+    },
+    resolve: async ({ args, context: { dataSources } }) => {
+        return dataSources.covidAPI.getUSDataDate(args.date).then((data) => ({
+            date: moment(String(data.date)).toDate(),
+            death: data.death,
+            deathIncrease: data.deathIncrease,
+            hash: data.hash,
+            hospitalizedCumulative: data.hospitalizedCumulative,
+            hospitalizedCurrently: data.hospitalizedCurrently,
+            hospitalizedIncrease: data.hospitalizedIncrease,
+            inIcuCumulative: data.inIcuCumulative,
+            inIcuCurrently: data.inIcuCurrently,
+            negative: data.negative,
+            negativeIncrease: data.negativeIncrease,
+            onVentilatorCumulative: data.onVentilatorCumulative,
+            onVentilatorCurrently: data.onVentilatorCurrently,
+            pending: data.pending,
+            positive: data.positive,
+            positiveIncrease: data.positiveIncrease,
+            recovered: data.recovered,
+            states: data.states,
+            totalTestResults: data.totalTestResults,
+        }));
+    },
+})
+    .addResolver({
+        name: "findMany",
+        type: [USDataTC],
+        resolve: async ({ context: { dataSources } }) => {
+            return dataSources.covidAPI.getHistoricUS().then((allData) =>
+                allData.map((data) => ({
+                    date: moment(String(data.date), "YYYYMMDD").toDate(),
+                    death: data.death,
+                    deathIncrease: data.deathIncrease,
+                    hash: data.hash,
+                    hospitalizedCumulative: data.hospitalizedCumulative,
+                    hospitalizedCurrently: data.hospitalizedCurrently,
+                    hospitalizedIncrease: data.hospitalizedIncrease,
+                    inIcuCumulative: data.inIcuCumulative,
+                    inIcuCurrently: data.inIcuCurrently,
+                    negative: data.negative,
+                    negativeIncrease: data.negativeIncrease,
+                    onVentilatorCumulative: data.onVentilatorCumulative,
+                    onVentilatorCurrently: data.onVentilatorCurrently,
+                    pending: data.pending,
+                    positive: data.positive,
+                    positiveIncrease: data.positiveIncrease,
+                    recovered: data.recovered,
+                    states: data.states,
+                    totalTestResults: data.totalTestResults,
+                })),
+            );
+        },
+    })
+    .addResolver({
+        name: "count",
+        type: "Int!",
+        resolve: async ({ context: { dataSources } }) => {
+            return dataSources.covidAPI
+                .getHistoricUS()
+                .then((allData) => allData.length);
+        },
+    })
+    .addResolver({
+        name: "findCurrent",
+        type: USDataTC,
+        resolve: async ({ context: { dataSources } }) => {
+            return dataSources.covidAPI.getCurrentUS();
+        },
+    });
+
+const USQueries = {
+    usFindOne: USDataTC.getResolver("findOne"),
+    usFindMany: USDataTC.getResolver("findMany"),
+    usCount: USDataTC.getResolver("count"),
+    usCurrent: USDataTC.getResolver("findCurrent"),
+};
+
+export { USDataTC, USQueries };

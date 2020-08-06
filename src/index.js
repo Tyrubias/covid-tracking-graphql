@@ -5,6 +5,7 @@ import log from "loglevel";
 
 import "./config";
 import COVIDTrackingAPI from "./utils/covidAPI";
+import Schema from "./graphql";
 
 const app = express().use(
     cors({
@@ -14,6 +15,7 @@ const app = express().use(
 );
 
 const server = new ApolloServer({
+    schema: Schema,
     dataSources: () => {
         return {
             covidAPI: new COVIDTrackingAPI(),
