@@ -17,7 +17,7 @@ const server = new ApolloServer({
     dataSources: () => {
         return {
             covidAPI: new COVIDTrackingAPI(),
-        }
+        };
     },
     introspection: true,
 });
