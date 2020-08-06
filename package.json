@@ -1,6 +1,6 @@
 {
     "name": "covid-tracking-graphql",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "description": "A GraphQL wrapper for the API at https://covidtracking.com/",
     "main": "index.js",
     "repository": "https://github.com/Tyrubias/covid-track-graphql",
@@ -12,7 +12,7 @@
         "compile": "babel src -d build",
         "format": "prettier --write .",
         "lint": "eslint --fix .",
-        "pkg": "pkg build/index.js -o build/HedwigBackend --options trace-warnings",
+        "pkg": "pkg build/index.js -o build/COVIDTracking --options trace-warnings",
         "refresh": "rm -rf build node_modules && rm package-lock.json",
         "start": "nodemon",
         "server": "node --trace-warnings build/index.js"

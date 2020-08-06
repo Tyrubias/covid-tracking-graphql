@@ -94,20 +94,12 @@ USDataTC.addResolver({
                 .getHistoricUS()
                 .then((allData) => allData.length);
         },
-    })
-    .addResolver({
-        name: "findCurrent",
-        type: USDataTC,
-        resolve: async ({ context: { dataSources } }) => {
-            return dataSources.covidAPI.getCurrentUS();
-        },
     });
 
 const USQueries = {
     usFindOne: USDataTC.getResolver("findOne"),
     usFindMany: USDataTC.getResolver("findMany"),
     usCount: USDataTC.getResolver("count"),
-    usCurrent: USDataTC.getResolver("findCurrent"),
 };
 
 export { USDataTC, USQueries };
