@@ -1,7 +1,6 @@
 import { ApolloServer } from "apollo-server-express";
 import cors from "cors";
 import express from "express";
-import http from "http";
 import log from "loglevel";
 
 const app = express().use(
@@ -17,18 +16,8 @@ const server = new ApolloServer({
 
 server.applyMiddleware({ app });
 
-const httpServer = http.createServer(app);
-
-server.installSubscriptionHandlers(httpServer);
-
-httpServer.listen({ port: 3001 }, () => {
-    log.info("Server running.");
+app.listen({ port: 3001 }, () => {
     log.info(
         `🚀 Server ready at http://localhost:${3001}${server.graphqlPath}`,
-    );
-    log.info(
-        `🚀 Subscriptions ready at http://localhost:${3001}${
-            server.subscriptionsPath
-        }`,
     );
 });
