@@ -22,6 +22,7 @@ const server = new ApolloServer({
         };
     },
     introspection: true,
+    tracing: true,
 });
 
 server.applyMiddleware({ app });
