@@ -21,8 +21,7 @@ const server = new ApolloServer({
             covidAPI: new COVIDTrackingAPI(),
         };
     },
-    introspection: true,
-    tracing: true,
+    tracing: process.env.NODE_ENV === "development",
 });
 
 server.applyMiddleware({ app });
