@@ -16,13 +16,13 @@ const app = express().use(
 
 const server = new ApolloServer({
     schema: Schema,
+    logger: log,
     dataSources: () => {
         return {
             covidAPI: new COVIDTrackingAPI(),
         };
     },
-    introspection: true,
-    tracing: true,
+    tracing: process.env.NODE_ENV === "development",
 });
 
 server.applyMiddleware({ app });

@@ -24,6 +24,7 @@ const USDataTC = sc.createObjectTC({
         recovered: "Int",
         states: "Int!",
         totalTestResults: "Int",
+        totalTestResultsIncrease: "Int",
     },
 });
 
@@ -35,7 +36,9 @@ USDataTC.addResolver({
     },
     resolve: async ({ args, context: { dataSources } }) => {
         return dataSources.covidAPI.getUSDataDate(args.date).then((data) => ({
-            date: moment(String(data.date)).toDate(),
+            date: moment(data.date, "YYYYMMDD").isValid()
+                ? moment(data.date, "YYYYMMDD").toDate()
+                : null,
             death: data.death,
             deathIncrease: data.deathIncrease,
             hash: data.hash,
@@ -54,6 +57,7 @@ USDataTC.addResolver({
             recovered: data.recovered,
             states: data.states,
             totalTestResults: data.totalTestResults,
+            totalTestResultsIncrease: data.totalTestResultsIncrease,
         }));
     },
 })
@@ -63,7 +67,9 @@ USDataTC.addResolver({
         resolve: async ({ context: { dataSources } }) => {
             return dataSources.covidAPI.getHistoricUS().then((allData) =>
                 allData.map((data) => ({
-                    date: moment(String(data.date), "YYYYMMDD").toDate(),
+                    date: moment(data.date, "YYYYMMDD").isValid()
+                        ? moment(data.date, "YYYYMMDD").toDate()
+                        : null,
                     death: data.death,
                     deathIncrease: data.deathIncrease,
                     hash: data.hash,
@@ -82,6 +88,7 @@ USDataTC.addResolver({
                     recovered: data.recovered,
                     states: data.states,
                     totalTestResults: data.totalTestResults,
+                    totalTestResultsIncrease: data.totalTestResultsIncrease,
                 })),
             );
         },
