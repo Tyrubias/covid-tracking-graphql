@@ -1,5 +1,8 @@
 import { sc } from "graphql-compose";
-import moment from "moment";
+import {
+    rawStateDataToGraphQL,
+    rawStateMetadataToGraphQL,
+} from "../utils/parse";
 import UrlTC from "./CommonTypes";
 
 const StateMetadataTC = sc.createObjectTC({
@@ -78,39 +81,16 @@ StateMetadataTC.addResolver({
     resolve: async ({ args, context: { dataSources } }) => {
         return dataSources.covidAPI
             .getMetadataState(args.stateAbbrev)
-            .then((data) => ({
-                covid19Site: data.covid19Site,
-                covid19SiteOld: data.covid19SiteOld,
-                covid19SiteSecondary: data.covid19SiteSecondary,
-                covid19SiteTertiary: data.covid19SiteTertiary,
-                covid19SiteQuaternary: data.covid19SiteQuaternary,
-                covid19SiteQuinary: data.covid19SiteQuinary,
-                fips: data.fips,
-                name: data.fips,
-                notes: data.notes,
-                state: data.state,
-                twitter: data.twitter,
-            }));
+            .then(rawStateMetadataToGraphQL);
     },
 })
     .addResolver({
         name: "findMany",
         type: [StateMetadataTC],
         resolve: async ({ context: { dataSources } }) => {
-            return dataSources.covidAPI.getStatesMetadata().then((allData) =>
-                allData.map((data) => ({
-                    covid19Site: data.covid19Site,
-                    covid19SiteOld: data.covid19SiteOld,
-                    covid19SiteSecondary: data.covid19SiteSecondary,
-                    covid19SiteTertiary: data.covid19SiteTertiary,
-                    fips: data.fips,
-                    name: data.fips,
-                    notes: data.notes,
-                    state: data.state,
-                    totalTestResultsField: data.totalTestResultsField,
-                    twitter: data.twitter,
-                })),
-            );
+            return dataSources.covidAPI
+                .getStatesMetadata()
+                .then(allData => allData.map(rawStateMetadataToGraphQL));
         },
     })
     .addResolver({
@@ -119,7 +99,7 @@ StateMetadataTC.addResolver({
         resolve: async ({ context: { dataSources } }) => {
             return dataSources.covidAPI
                 .getStatesMetadata()
-                .then((allData) => allData.length);
+                .then(allData => allData.length);
         },
     });
 
@@ -133,57 +113,7 @@ StateDataTC.addResolver({
     resolve: async ({ args, context: { dataSources } }) => {
         return dataSources.covidAPI
             .getStateOnDate(args.stateAbbrev, args.date)
-            .then((data) => ({
-                dataQualityGrade: data.dataQualityGrade,
-                date: moment(data.date, "YYYYMMDD").isValid()
-                    ? moment(data.date, "YYYYMMDD").toDate()
-                    : null,
-                death: data.death,
-                deathConfirmed: data.deathConfirmed,
-                deathIncrease: data.deathIncrease,
-                deathProbable: data.deathProbable,
-                fips: data.fips,
-                hospitalizedCumulative: data.hospitalizedCumulative,
-                hospitalizedCurrently: data.hospitalizedCurrently,
-                hospitalizedIncrease: data.hospitalizedIncrease,
-                inIcuCumulative: data.inIcuCumulative,
-                inIcuCurrently: data.inIcuCurrently,
-                lastUpdateEt: moment(data.lastUpdateEt, [
-                    "M/D/YYYY HH:mm",
-                    "MM/DD/YYYY HH:mm",
-                ]).isValid()
-                    ? moment(data.lastUpdateEt, [
-                          "M/D/YYYY HH:mm",
-                          "MM/DD/YYYY HH:mm",
-                      ]).toDate()
-                    : null,
-                negative: data.negative,
-                negativeTestsAntibody: data.negativeTestsAntibody,
-                negativeTestsPeopleAntibody: data.negativeTestsPeopleAntibody,
-                negativeTestsViral: data.negativeTestsViral,
-                onVentilatorCumulative: data.onVentilatorCumulative,
-                onVentilatorCurrently: data.onVentilatorCurrently,
-                pending: data.pending,
-                positiveCasesViral: data.positiveCasesViral,
-                positiveIncrease: data.positiveIncrease,
-                positiveTestsAntibody: data.positiveTestsAntibody,
-                positiveTestsAntigen: data.positiveTestsAntigen,
-                positiveTestsPeopleAntibody: data.positiveTestsPeopleAntibody,
-                positiveTestsPeopleAntigen: data.positiveTestsPeopleAntigen,
-                positiveTestsViral: data.positiveTestsViral,
-                probableCases: data.probableCases,
-                recovered: data.recovered,
-                state: data.state,
-                totalTestEncountersViral: data.totalTestEncountersViral,
-                totalTestResults: data.totalTestResults,
-                totalTestResultsIncrease: data.totalTestResultsIncrease,
-                totalTestsAntibody: data.totalTestsAntibody,
-                totalTestsAntigen: data.totalTestsAntigen,
-                totalTestsPeopleAntibody: data.totalTestsPeopleAntibody,
-                totalTestsPeopleAntigen: data.totalTestsPeopleAntigen,
-                totalTestsPeopleViral: data.totalTestsPeopleViral,
-                totalTestViral: data.totalTestViral,
-            }));
+            .then(rawStateDataToGraphQL);
     },
 })
     .addResolver({
@@ -195,62 +125,28 @@ StateDataTC.addResolver({
         resolve: async ({ args, context: { dataSources } }) => {
             return dataSources.covidAPI
                 .getHistoricForState(args.stateAbbrev)
-                .then((allData) =>
-                    allData.map((data) => ({
-                        dataQualityGrade: data.dataQualityGrade,
-                        date: moment(data.date, "YYYYMMDD").isValid()
-                            ? moment(data.date, "YYYYMMDD").toDate()
-                            : null,
-                        death: data.death,
-                        deathConfirmed: data.deathConfirmed,
-                        deathIncrease: data.deathIncrease,
-                        deathProbable: data.deathProbable,
-                        fips: data.fips,
-                        hospitalizedCumulative: data.hospitalizedCumulative,
-                        hospitalizedCurrently: data.hospitalizedCurrently,
-                        hospitalizedIncrease: data.hospitalizedIncrease,
-                        inIcuCumulative: data.inIcuCumulative,
-                        inIcuCurrently: data.inIcuCurrently,
-                        lastUpdateEt: moment(data.lastUpdateEt, [
-                            "M/D/YYYY HH:mm",
-                            "MM/DD/YYYY HH:mm",
-                        ]).isValid()
-                            ? moment(data.lastUpdateEt, [
-                                  "M/D/YYYY HH:mm",
-                                  "MM/DD/YYYY HH:mm",
-                              ]).toDate()
-                            : null,
-                        negative: data.negative,
-                        negativeTestsAntibody: data.negativeTestsAntibody,
-                        negativeTestsPeopleAntibody:
-                            data.negativeTestsPeopleAntibody,
-                        negativeTestsViral: data.negativeTestsViral,
-                        onVentilatorCumulative: data.onVentilatorCumulative,
-                        onVentilatorCurrently: data.onVentilatorCurrently,
-                        pending: data.pending,
-                        positiveCasesViral: data.positiveCasesViral,
-                        positiveIncrease: data.positiveIncrease,
-                        positiveTestsAntibody: data.positiveTestsAntibody,
-                        positiveTestsAntigen: data.positiveTestsAntigen,
-                        positiveTestsPeopleAntibody:
-                            data.positiveTestsPeopleAntibody,
-                        positiveTestsPeopleAntigen:
-                            data.positiveTestsPeopleAntigen,
-                        positiveTestsViral: data.positiveTestsViral,
-                        probableCases: data.probableCases,
-                        recovered: data.recovered,
-                        state: data.state,
-                        totalTestEncountersViral: data.totalTestEncountersViral,
-                        totalTestResults: data.totalTestResults,
-                        totalTestResultsIncrease: data.totalTestResultsIncrease,
-                        totalTestsAntibody: data.totalTestsAntibody,
-                        totalTestsAntigen: data.totalTestsAntigen,
-                        totalTestsPeopleAntibody: data.totalTestsPeopleAntibody,
-                        totalTestsPeopleAntigen: data.totalTestsPeopleAntigen,
-                        totalTestsPeopleViral: data.totalTestsPeopleViral,
-                        totalTestViral: data.totalTestViral,
-                    })),
-                );
+                .then(allData => allData.map(rawStateDataToGraphQL));
+        },
+    })
+    .addResolver({
+        name: "statesCurrent",
+        type: [StateDataTC],
+        resolve: async ({ context: { dataSources } }) => {
+            return dataSources.covidAPI
+                .getCurrentStates()
+                .then(allData => allData.map(rawStateDataToGraphQL));
+        },
+    })
+    .addResolver({
+        name: "stateCurrent",
+        type: StateDataTC,
+        args: {
+            stateAbbrev: "String!",
+        },
+        resolve: async ({ args, context: { dataSources } }) => {
+            return dataSources.covidAPI
+                .getCurrentForState(args.stateAbbrev)
+                .then(rawStateDataToGraphQL);
         },
     })
     .addResolver({
@@ -259,7 +155,7 @@ StateDataTC.addResolver({
         resolve: async ({ args, context: { dataSources } }) => {
             return dataSources.covidAPI
                 .getHistoricForState(args.stateAbbrev)
-                .then((allData) => allData.length);
+                .then(allData => allData.length);
         },
     });
 
@@ -272,6 +168,8 @@ const StateMetadataQueries = {
 const StateDataQueries = {
     stateOne: StateDataTC.getResolver("findOne"),
     stateMany: StateDataTC.getResolver("findMany"),
+    statesCurrent: StateDataTC.getResolver("statesCurrent"),
+    stateCurrent: StateDataTC.getResolver("stateCurrent"),
     stateCount: StateDataTC.getResolver("count"),
 };
 

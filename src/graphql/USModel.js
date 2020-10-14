@@ -1,5 +1,6 @@
 import { sc } from "graphql-compose";
 import moment from "moment";
+import { rawUSDataToGraphQL } from "../utils/parse";
 
 const USDataTC = sc.createObjectTC({
     name: "USData",
@@ -35,62 +36,25 @@ USDataTC.addResolver({
         date: "Date!",
     },
     resolve: async ({ args, context: { dataSources } }) => {
-        return dataSources.covidAPI.getUSDataDate(args.date).then((data) => ({
-            date: moment(data.date, "YYYYMMDD").isValid()
-                ? moment(data.date, "YYYYMMDD").toDate()
-                : null,
-            death: data.death,
-            deathIncrease: data.deathIncrease,
-            hash: data.hash,
-            hospitalizedCumulative: data.hospitalizedCumulative,
-            hospitalizedCurrently: data.hospitalizedCurrently,
-            hospitalizedIncrease: data.hospitalizedIncrease,
-            inIcuCumulative: data.inIcuCumulative,
-            inIcuCurrently: data.inIcuCurrently,
-            negative: data.negative,
-            negativeIncrease: data.negativeIncrease,
-            onVentilatorCumulative: data.onVentilatorCumulative,
-            onVentilatorCurrently: data.onVentilatorCurrently,
-            pending: data.pending,
-            positive: data.positive,
-            positiveIncrease: data.positiveIncrease,
-            recovered: data.recovered,
-            states: data.states,
-            totalTestResults: data.totalTestResults,
-            totalTestResultsIncrease: data.totalTestResultsIncrease,
-        }));
+        return dataSources.covidAPI
+            .getUSDataDate(args.date)
+            .then(rawUSDataToGraphQL);
     },
 })
     .addResolver({
         name: "findMany",
         type: [USDataTC],
         resolve: async ({ context: { dataSources } }) => {
-            return dataSources.covidAPI.getHistoricUS().then((allData) =>
-                allData.map((data) => ({
-                    date: moment(data.date, "YYYYMMDD").isValid()
-                        ? moment(data.date, "YYYYMMDD").toDate()
-                        : null,
-                    death: data.death,
-                    deathIncrease: data.deathIncrease,
-                    hash: data.hash,
-                    hospitalizedCumulative: data.hospitalizedCumulative,
-                    hospitalizedCurrently: data.hospitalizedCurrently,
-                    hospitalizedIncrease: data.hospitalizedIncrease,
-                    inIcuCumulative: data.inIcuCumulative,
-                    inIcuCurrently: data.inIcuCurrently,
-                    negative: data.negative,
-                    negativeIncrease: data.negativeIncrease,
-                    onVentilatorCumulative: data.onVentilatorCumulative,
-                    onVentilatorCurrently: data.onVentilatorCurrently,
-                    pending: data.pending,
-                    positive: data.positive,
-                    positiveIncrease: data.positiveIncrease,
-                    recovered: data.recovered,
-                    states: data.states,
-                    totalTestResults: data.totalTestResults,
-                    totalTestResultsIncrease: data.totalTestResultsIncrease,
-                })),
-            );
+            return dataSources.covidAPI
+                .getHistoricUS()
+                .then(allData => allData.map(rawUSDataToGraphQL));
+        },
+    })
+    .addResolver({
+        name: "usCurrent",
+        type: USDataTC,
+        resolve: async ({ context: { dataSources } }) => {
+            return dataSources.covidAPI.getCurrentUS().then(rawUSDataToGraphQL);
         },
     })
     .addResolver({
@@ -99,13 +63,14 @@ USDataTC.addResolver({
         resolve: async ({ context: { dataSources } }) => {
             return dataSources.covidAPI
                 .getHistoricUS()
-                .then((allData) => allData.length);
+                .then(allData => allData.length);
         },
     });
 
 const USQueries = {
     usFindOne: USDataTC.getResolver("findOne"),
     usFindMany: USDataTC.getResolver("findMany"),
+    usCurrent: USDataTC.getResolver("usCurrent"),
     usCount: USDataTC.getResolver("count"),
 };
 
